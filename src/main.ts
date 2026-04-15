@@ -112,8 +112,13 @@ async function loadNote() {
 }
 
 // Save on window close and blur
-getCurrentWindow().onCloseRequested(() => {
-  saveNow();
+getCurrentWindow().onCloseRequested(async (_event) => {
+  try {
+    if (saveTimeout) clearTimeout(saveTimeout);
+    await invoke("save_note", { content: editor.getHTML() });
+  } catch (_) {
+    // Allow close even if save fails
+  }
 });
 window.addEventListener("blur", saveNow);
 
