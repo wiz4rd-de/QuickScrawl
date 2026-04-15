@@ -70,6 +70,16 @@ Notes are saved as HTML in your OS application data directory:
 | Windows | `%APPDATA%\com.quickscrawl.desktop\note.html` |
 | Linux | `~/.local/share/com.quickscrawl.desktop/note.html` |
 
+## Releasing
+
+```bash
+npm run release          # patch: 1.0.1 → 1.0.2
+npm run release:minor    # minor: 1.0.1 → 1.1.0
+npm run release:major    # major: 1.0.1 → 2.0.0
+```
+
+This bumps the version, syncs it across config files, commits, tags, and pushes. The push of the `v*` tag triggers the Build & Release workflow on GitHub Actions.
+
 ## Tech Stack
 
 - **Frontend** — TypeScript, [Tiptap](https://tiptap.dev/) (ProseMirror), Vite
