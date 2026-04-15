@@ -250,6 +250,92 @@ h1, h2, h3 {
   font-size: 0.8rem;
 }
 
+/* ── Linux Modal ─────────────────────────────────── */
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal {
+  background: #fffae6;
+  border: 1px solid rgba(217, 209, 191, 0.6);
+  border-radius: 12px;
+  padding: 32px 28px 28px;
+  max-width: 360px;
+  width: 90%;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.modal h3 {
+  font-size: 1.4rem;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #888;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+.modal-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border: 2px solid rgba(217, 209, 191, 0.6);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  color: #333;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.modal-option:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 2px 12px rgba(59, 130, 246, 0.15);
+  text-decoration: none;
+}
+
+.modal-option-label {
+  font-family: "Patrick Hand", cursive;
+  font-size: 1.15rem;
+}
+
+.modal-option-desc {
+  font-size: 0.8rem;
+  color: #888;
+}
+
 /* ── Footer ───────────────────────────────────────── */
 
 .footer {

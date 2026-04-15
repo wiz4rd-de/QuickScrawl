@@ -1,0 +1,49 @@
+name: Deploy Website
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get release info and replace placeholders
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          VERSION="${TAG#v}"
+
+          sed -i "s|__DOWNLOAD_MAC__|https://github.com/wiz4rd-de/QuickScrawl/releases/download/${TAG}/QuickScrawl_${VERSION}_aarch64.dmg|g" website/index.html
+          sed -i "s|__DOWNLOAD_WIN__|https://github.com/wiz4rd-de/QuickScrawl/releases/download/${TAG}/QuickScrawl_${VERSION}_x64-setup.exe|g" website/index.html
+          sed -i "s|__DOWNLOAD_LINUX_DEB__|https://github.com/wiz4rd-de/QuickScrawl/releases/download/${TAG}/QuickScrawl_${VERSION}_amd64.deb|g" website/index.html
+          sed -i "s|__DOWNLOAD_LINUX_APPIMAGE__|https://github.com/wiz4rd-de/QuickScrawl/releases/download/${TAG}/QuickScrawl_${VERSION}_amd64.AppImage|g" website/index.html
+          sed -i "s|__DOWNLOAD_LINUX_RPM__|https://github.com/wiz4rd-de/QuickScrawl/releases/download/${TAG}/QuickScrawl-${VERSION}-1.x86_64.rpm|g" website/index.html
+
+          echo "Replaced placeholders for version ${VERSION} (tag ${TAG})"
+          grep -n 'DOWNLOAD' website/index.html || echo "All placeholders replaced successfully"
+
+      - name: Deploy via rsync
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          KEYFILE="$(mktemp)"
+          echo "${DEPLOY_SSH_KEY}" > "${KEYFILE}"
+          chmod 600 "${KEYFILE}"
+
+          rsync -avz --delete \
+            -e "ssh -i ${KEYFILE} -o StrictHostKeyChecking=no" \
+            website/ \
+            "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}"
+
+          rm -f "${KEYFILE}"

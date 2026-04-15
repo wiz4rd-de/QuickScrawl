@@ -96,21 +96,43 @@
     <div class="container">
       <h2>Download</h2>
       <div class="download-buttons">
-        <a href="https://github.com/wiz4rd-de/QuickScrawl/releases/latest" class="download-card" data-os="mac">
+        <a href="__DOWNLOAD_MAC__" class="download-card" data-os="mac">
           <span class="dl-icon">🍎</span>
           <span class="dl-label">macOS</span>
           <span class="dl-format">.dmg</span>
         </a>
-        <a href="https://github.com/wiz4rd-de/QuickScrawl/releases/latest" class="download-card" data-os="win">
+        <a href="__DOWNLOAD_WIN__" class="download-card" data-os="win">
           <span class="dl-icon">🪟</span>
           <span class="dl-label">Windows</span>
-          <span class="dl-format">.msi</span>
+          <span class="dl-format">.exe</span>
         </a>
-        <a href="https://github.com/wiz4rd-de/QuickScrawl/releases/latest" class="download-card" data-os="linux">
+        <a href="#" class="download-card" data-os="linux" id="linux-download-btn">
           <span class="dl-icon">🐧</span>
           <span class="dl-label">Linux</span>
-          <span class="dl-format">.deb / .AppImage</span>
+          <span class="dl-format">.deb / .AppImage / .rpm</span>
         </a>
+      </div>
+
+      <!-- Linux download modal -->
+      <div class="modal-overlay" id="linux-modal">
+        <div class="modal">
+          <button class="modal-close" id="modal-close-btn" aria-label="Close">&times;</button>
+          <h3>Download for Linux</h3>
+          <div class="modal-options">
+            <a href="__DOWNLOAD_LINUX_DEB__" class="modal-option">
+              <span class="modal-option-label">.deb</span>
+              <span class="modal-option-desc">Debian / Ubuntu</span>
+            </a>
+            <a href="__DOWNLOAD_LINUX_APPIMAGE__" class="modal-option">
+              <span class="modal-option-label">.AppImage</span>
+              <span class="modal-option-desc">Universal</span>
+            </a>
+            <a href="__DOWNLOAD_LINUX_RPM__" class="modal-option">
+              <span class="modal-option-label">.rpm</span>
+              <span class="modal-option-desc">Fedora / RHEL</span>
+            </a>
+          </div>
+        </div>
       </div>
       <p class="download-note">
         <strong>macOS users:</strong> After installing, run
@@ -140,6 +162,31 @@
         var el = document.querySelector('[data-os="' + os + '"]');
         if (el) el.classList.add('highlight');
       }
+    })();
+
+    // Linux download modal
+    (function() {
+      var modal = document.getElementById('linux-modal');
+      var btn = document.getElementById('linux-download-btn');
+      var closeBtn = document.getElementById('modal-close-btn');
+
+      function openModal(e) {
+        e.preventDefault();
+        modal.classList.add('active');
+      }
+
+      function closeModal() {
+        modal.classList.remove('active');
+      }
+
+      btn.addEventListener('click', openModal);
+      closeBtn.addEventListener('click', closeModal);
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+      });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeModal();
+      });
     })();
   </script>
 </body>
