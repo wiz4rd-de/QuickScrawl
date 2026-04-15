@@ -30,20 +30,11 @@ jobs:
           echo "Replaced placeholders for version ${VERSION} (tag ${TAG})"
           grep -n 'DOWNLOAD' website/index.html || echo "All placeholders replaced successfully"
 
-      - name: Deploy via rsync
-        env:
-          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
-          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
-          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
-        run: |
-          KEYFILE="$(mktemp)"
-          echo "${DEPLOY_SSH_KEY}" > "${KEYFILE}"
-          chmod 600 "${KEYFILE}"
-
-          rsync -avz --delete \
-            -e "ssh -i ${KEYFILE} -o StrictHostKeyChecking=no" \
-            website/ \
-            "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}"
-
-          rm -f "${KEYFILE}"
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./website/
+          server-dir: ${{ secrets.FTP_PATH }}
