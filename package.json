@@ -8,10 +8,11 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "release": "npm version patch --no-git-tag-version && npm run release:finish",
-    "release:minor": "npm version minor --no-git-tag-version && npm run release:finish",
-    "release:major": "npm version major --no-git-tag-version && npm run release:finish",
-    "release:finish": "node scripts/sync-version.js && git add -A && git commit -m \"Release v$(node -p \"require('./package.json').version\")\" && git tag v$(node -p \"require('./package.json').version\") && git push && git push --tags"
+    "release:bump": "npm version patch --no-git-tag-version && npm run release:sync",
+    "release:bump:minor": "npm version minor --no-git-tag-version && npm run release:sync",
+    "release:bump:major": "npm version major --no-git-tag-version && npm run release:sync",
+    "release:sync": "node scripts/sync-version.js && git add -A && git commit -m \"Release v$(node -p \"require('./package.json').version\")\"",
+    "release:tag": "git tag v$(node -p \"require('./package.json').version\") && git push --tags"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2",
