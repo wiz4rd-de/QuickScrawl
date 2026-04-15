@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickScrawl — A tiny notepad that stays out of your way</title>
+  <meta name="description" content="Rich text on ruled paper. Cross-platform. ~10 MB. QuickScrawl is a tiny notepad app built with Tauri.">
+  <link rel="icon" type="image/svg+xml" href="app-icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-inner">
+      <a href="/" class="logo">
+        <img src="app-icon.svg" alt="QuickScrawl icon" width="40" height="40">
+        <span class="wordmark">QuickScrawl</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <h1>A tiny notepad that stays out of your way.</h1>
+      <p class="subline">Rich text on ruled paper. Cross-platform. ~10&nbsp;MB.</p>
+      <div class="screenshot-frame">
+        <div class="screenshot-titlebar">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+        </div>
+        <div class="screenshot-content">
+          <!-- Replace with actual screenshot -->
+          <p class="screenshot-placeholder">App screenshot goes here</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="container">
+      <h2>Features</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="feature-icon">✏️</span>
+          <h3>Rich text formatting</h3>
+          <p>Bold, underline, strikethrough, and colors — all the basics, nothing bloated.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📝</span>
+          <h3>Ruled notepad styling</h3>
+          <p>Yellow paper with ruled lines and a handwritten font. Just like the real thing.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">💾</span>
+          <h3>Auto-save</h3>
+          <p>Your notes are saved as you type. No Ctrl+S anxiety.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🔍</span>
+          <h3>Font zoom</h3>
+          <p>Ctrl/Cmd +/- to zoom in and out. Easy on the eyes.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📌</span>
+          <h3>Pin to foreground</h3>
+          <p>Keep your notes always on top while you work in other apps.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🌙</span>
+          <h3>Dark mode toolbar</h3>
+          <p>A dark toolbar that adapts to your system theme preferences.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🪶</span>
+          <h3>Tiny footprint</h3>
+          <p>~10 MB installed. No Electron. No bloat. Just Tauri.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">💻</span>
+          <h3>Cross-platform</h3>
+          <p>Available on macOS, Windows, and Linux.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Download -->
+  <section class="download" id="download">
+    <div class="container">
+      <h2>Download</h2>
+      <div class="download-buttons">
+        <a href="https://github.com/wiz4rd-de/QuickScrawl/releases/latest" class="download-card" data-os="mac">
+          <span class="dl-icon">🍎</span>
+          <span class="dl-label">macOS</span>
+          <span class="dl-format">.dmg</span>
+        </a>
+        <a href="https://github.com/wiz4rd-de/QuickScrawl/releases/latest" class="download-card" data-os="win">
+          <span class="dl-icon">🪟</span>
+          <span class="dl-label">Windows</span>
+          <span class="dl-format">.msi</span>
+        </a>
+        <a href="https://github.com/wiz4rd-de/QuickScrawl/releases/latest" class="download-card" data-os="linux">
+          <span class="dl-icon">🐧</span>
+          <span class="dl-label">Linux</span>
+          <span class="dl-format">.deb / .AppImage</span>
+        </a>
+      </div>
+      <p class="download-note">
+        <strong>macOS users:</strong> After installing, run
+        <code>xattr -cr /Applications/QuickScrawl.app</code>
+        to clear the quarantine flag.
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>MIT License</span>
+      <span class="footer-sep">·</span>
+      <a href="https://github.com/wiz4rd-de/QuickScrawl">GitHub</a>
+      <span class="footer-sep">·</span>
+      <span>Built with <a href="https://tauri.app">Tauri</a></span>
+    </div>
+  </footer>
+
+  <script>
+    // Highlight download button matching the user's OS
+    (function() {
+      var p = navigator.platform || '';
+      var os = /Mac/.test(p) ? 'mac' : /Win/.test(p) ? 'win' : /Linux/.test(p) ? 'linux' : '';
+      if (os) {
+        var el = document.querySelector('[data-os="' + os + '"]');
+        if (el) el.classList.add('highlight');
+      }
+    })();
+  </script>
+</body>
+</html>
