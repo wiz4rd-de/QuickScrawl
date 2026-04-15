@@ -1,0 +1,147 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, labeled]
+
+permissions:
+  contents: write
+
+jobs:
+  version-bump:
+    # Run on open (auto-patch) or when minor/major label is added
+    if: >-
+      github.event.action == 'opened' ||
+      (github.event.action == 'labeled' &&
+       contains(fromJSON('["minor","major"]'), github.event.label.name))
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.push.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Determine bump type
+        id: bump
+        run: |
+          if [[ "${{ github.event.action }}" == "labeled" && "${{ github.event.label.name }}" == "major" ]]; then
+            echo "type=major" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.event.action }}" == "labeled" && "${{ github.event.label.name }}" == "minor" ]]; then
+            echo "type=minor" >> "$GITHUB_OUTPUT"
+          else
+            echo "type=patch" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bump version
+        run: |
+          BUMP="${{ steps.bump.outputs.type }}"
+          npm version "$BUMP" --no-git-tag-version
+          node scripts/sync-version.js
+          VERSION=$(node -p "require('./package.json').version")
+          git add -A
+          git commit -m "Release v${VERSION}"
+
+      - name: Push and capture SHA
+        id: push
+        run: |
+          git push
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  check:
+    # Always run checks; wait for version-bump if it ran
+    if: always()
+    needs: version-bump
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            label: macOS
+          - os: windows-latest
+            label: Windows
+          - os: ubuntu-22.04
+            label: Linux
+
+    runs-on: ${{ matrix.os }}
+    name: Check (${{ matrix.label }})
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Install Linux dependencies
+        if: matrix.os == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: TypeScript check
+        run: npx tsc --noEmit
+
+      - name: Check Rust code
+        working-directory: src-tauri
+        run: cargo check
+
+      # Report status against the version-bump commit so the PR sees it
+      - name: Report status to bumped commit
+        if: needs.version-bump.outputs.sha != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: '${{ needs.version-bump.outputs.sha }}',
+              state: 'success',
+              context: 'Check (${{ matrix.label }})',
+              description: 'TypeScript and Rust checks passed',
+            });
+
+      - name: Report failure to bumped commit
+        if: failure() && needs.version-bump.outputs.sha != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: '${{ needs.version-bump.outputs.sha }}',
+              state: 'failure',
+              context: 'Check (${{ matrix.label }})',
+              description: 'Checks failed',
+            });

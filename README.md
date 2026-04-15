@@ -72,22 +72,23 @@ Notes are saved as HTML in your OS application data directory:
 
 ## Releasing
 
-On your feature/fix branch, bump the version:
+Releases are fully automated via GitHub Actions.
+
+1. **Create a feature branch** and make your changes
+2. **Open a PR** against `main` — the version is auto-bumped (patch) and checks run
+3. To bump as **minor** or **major**, add the `minor` or `major` label to the PR
+4. **Merge the PR** — a `v*` tag is created automatically, triggering the build
+5. **Publish** the draft release on the GitHub Releases page
+
+### Manual version bump (optional)
+
+If you prefer to control the version bump yourself on the branch:
 
 ```bash
 npm run release:bump          # patch: 1.0.1 → 1.0.2
 npm run release:bump:minor    # minor: 1.0.1 → 1.1.0
 npm run release:bump:major    # major: 1.0.1 → 2.0.0
 ```
-
-Then push, open a PR, and merge. After merging, tag the release on `main`:
-
-```bash
-git checkout main && git pull
-npm run release:tag
-```
-
-The `v*` tag triggers the Build & Release workflow on GitHub Actions.
 
 ## Tech Stack
 
