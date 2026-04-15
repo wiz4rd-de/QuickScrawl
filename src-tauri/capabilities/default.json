@@ -1,0 +1,9 @@
+{
+  "identifier": "default",
+  "description": "Default permissions for SimpleNote",
+  "windows": ["*"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-set-always-on-top"
+  ]
+}
