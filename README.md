@@ -72,13 +72,22 @@ Notes are saved as HTML in your OS application data directory:
 
 ## Releasing
 
+On your feature/fix branch, bump the version:
+
 ```bash
-npm run release          # patch: 1.0.1 → 1.0.2
-npm run release:minor    # minor: 1.0.1 → 1.1.0
-npm run release:major    # major: 1.0.1 → 2.0.0
+npm run release:bump          # patch: 1.0.1 → 1.0.2
+npm run release:bump:minor    # minor: 1.0.1 → 1.1.0
+npm run release:bump:major    # major: 1.0.1 → 2.0.0
 ```
 
-This bumps the version, syncs it across config files, commits, tags, and pushes. The push of the `v*` tag triggers the Build & Release workflow on GitHub Actions.
+Then push, open a PR, and merge. After merging, tag the release on `main`:
+
+```bash
+git checkout main && git pull
+npm run release:tag
+```
+
+The `v*` tag triggers the Build & Release workflow on GitHub Actions.
 
 ## Tech Stack
 
